@@ -1,0 +1,212 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<title>Aplikasi Struk Project Design</title>
+
+<style>
+body {
+    font-family: Arial, sans-serif;
+    background: #f4f4f4;
+    margin: 0;
+    padding: 20px;
+}
+
+.container {
+    max-width: 600px;
+    margin: auto;
+    background: #fff;
+    padding: 20px;
+    border-radius: 8px;
+}
+
+/* INPUT MODE */
+#appInput h1 {
+    text-align: center;
+}
+
+button {
+    margin-top: 10px;
+    padding: 10px;
+    width: 100%;
+    background: #4CAF50;
+    color: #fff;
+    border: none;
+    cursor: pointer;
+}
+
+table {
+    width: 100%;
+    margin-top: 15px;
+    border-collapse: collapse;
+}
+
+th, td {
+    border: 1px solid #ccc;
+    padding: 6px;
+}
+
+/* RECEIPT MODE */
+#appReceipt {
+    display: none;
+    width: 280px;
+    margin: auto;
+    font-family: "Courier New", monospace;
+    font-size: 12px;
+}
+
+.receipt-center {
+    text-align: center;
+}
+
+.receipt-line {
+    border-top: 1px dashed #000;
+    margin: 8px 0;
+}
+
+.receipt-row {
+    display: flex;
+    justify-content: space-between;
+}
+
+/* PRINT */
+@media print {
+    body {
+        background: #fff;
+        padding: 0;
+    }
+    #appInput {
+        display: none;
+    }
+    #appReceipt {
+        display: block;
+    }
+}
+</style>
+</head>
+
+<body>
+
+<div class="container">
+
+<!-- INPUT -->
+<div id="appInput">
+    <h1>Project Design</h1>
+
+    <button onclick="loadAllProject()">
+        Auto Input Semua Project
+    </button>
+
+    <table>
+        <thead>
+            <tr>
+                <th>Item</th>
+                <th>Qty</th>
+                <th>Harga</th>
+                <th>Total</th>
+            </tr>
+        </thead>
+        <tbody id="list"></tbody>
+    </table>
+
+    <h3 id="grandTotal">Total: Rp 0</h3>
+
+    <button onclick="printReceipt()">Cetak Struk</button>
+</div>
+
+<!-- STRUK -->
+<div id="appReceipt">
+    <div class="receipt-center">
+        <strong>AMUDESIGN</strong><br>
+        Jl. Jenderal Sudirman No.45<br>
+        Kel. 26 Ilir, Kec. Bukit Kecil<br>
+        Kota Palembang, Sumatera Selatan<br>
+        <span id="datePrint"></span>
+    </div>
+
+    <div class="receipt-line"></div>
+
+    <div id="receiptItems"></div>
+
+    <div class="receipt-line"></div>
+
+    <div class="receipt-row">
+        <strong>TOTAL</strong>
+        <strong id="totalPrint"></strong>
+    </div>
+
+    <div class="receipt-line"></div>
+
+    <div class="receipt-center">
+        Terima Kasih<br>
+        Silakan Datang Kembali
+    </div>
+</div>
+
+</div>
+
+<script>
+let items = [];
+let total = 0;
+
+function formatRupiah(num) {
+    return "Rp " + num.toLocaleString("id-ID");
+}
+
+
+const allProject = [
+    { name: "Design Canva Berita", qty: 6, price: 35000 },
+
+    { name: "Design Canva Story Instagram", qty: 5, price: 10000 },
+
+];
+
+/* AUTO INPUT SEMUA PROJECT */
+function loadAllProject() {
+    items = [];
+    total = 0;
+    document.getElementById("list").innerHTML = "";
+
+    allProject.forEach(p => {
+        const itemTotal = p.qty * p.price;
+        items.push({ name: p.name, qty: p.qty, itemTotal });
+
+        document.getElementById("list").innerHTML += `
+            <tr>
+                <td>${p.name}</td>
+                <td>${p.qty}</td>
+                <td>${formatRupiah(p.price)}</td>
+                <td>${formatRupiah(itemTotal)}</td>
+            </tr>
+        `;
+
+        total += itemTotal;
+    });
+
+    document.getElementById("grandTotal").innerText =
+        "Total: " + formatRupiah(total);
+}
+
+/* CETAK STRUK */
+function printReceipt() {
+    document.getElementById("receiptItems").innerHTML = "";
+
+    items.forEach(i => {
+        document.getElementById("receiptItems").innerHTML += `
+            <div class="receipt-row">
+                <span>${i.name}</span>
+                <span>${formatRupiah(i.itemTotal)}</span>
+            </div>
+        `;
+    });
+
+    document.getElementById("totalPrint").innerText = formatRupiah(total);
+    document.getElementById("datePrint").innerText =
+        new Date().toLocaleString("id-ID");
+
+    window.print();
+}
+</script>
+
+</body>
+</html>
